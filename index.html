@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ibukun's Route to Cloud & ML</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1E6;
+    --paper-card:#F8F9F3;
+    --ink:#1F2E28;
+    --ink-soft:#4C5A52;
+    --line:#C7CDB8;
+    --route:#1F5C56;
+    --route-soft:#DCE6E1;
+    --camp:#C98A2C;
+    --camp-soft:#F3E3C6;
+    --summit:#8C4A3B;
+    --summit-soft:#EAD9D3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0);
+    background-size: 26px 26px;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px 80px;}
+
+  /* HERO */
+  .hero{padding:64px 24px 40px;text-align:left;max-width:880px;margin:0 auto;}
+  .eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--route); font-weight:700; margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:1px;background:var(--route);display:inline-block;}
+  h1{
+    font-family:'Fraunces',serif; font-weight:900; font-size:clamp(34px,5vw,54px);
+    line-height:1.04; margin:0 0 18px; letter-spacing:-.01em;
+  }
+  h1 em{font-style:italic;font-weight:600;color:var(--route);}
+  .hero p{max-width:600px;color:var(--ink-soft);font-size:16.5px;margin:0 0 28px;}
+
+  .stat-row{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .stat{flex:1;min-width:130px;padding:16px 18px;border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat .n{font-family:'Fraunces',serif;font-weight:700;font-size:22px;display:block;}
+  .stat .l{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}
+
+  /* TOGGLE */
+  .toggle-row{display:flex;gap:10px;margin:30px auto 6px;max-width:880px;padding:0 24px;}
+  .toggle-btn{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    padding:10px 16px;border:1px solid var(--ink);background:transparent;color:var(--ink);
+    cursor:pointer;border-radius:2px;transition:all .15s ease;
+  }
+  .toggle-btn.active{background:var(--ink);color:var(--paper);}
+  .toggle-btn:not(.active):hover{background:var(--route-soft);}
+
+  /* PROGRESS */
+  .progress-bar-outer{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:18px;}
+  .progress-bar-inner{height:100%;background:var(--route);width:0%;transition:width .4s ease;}
+  .progress-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:8px;letter-spacing:.03em;}
+
+  /* TRAIL VIEW */
+  #trail{display:none;padding-top:26px;}
+  #trail.active{display:block;}
+  .trail-track{position:relative;padding-left:34px;}
+  .trail-track::before{
+    content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;
+    background-image:linear-gradient(var(--route) 60%, transparent 0);
+    background-size:2px 10px; background-repeat:repeat-y;
+  }
+  .node{position:relative;margin-bottom:34px;}
+  .node-marker{
+    position:absolute;left:-34px;top:2px;width:20px;height:20px;border-radius:50%;
+    background:var(--camp); border:3px solid var(--paper); box-shadow:0 0 0 2px var(--camp);
+  }
+  .node.rest .node-marker{background:var(--ink-soft);box-shadow:0 0 0 2px var(--ink-soft);width:12px;height:12px;left:-30px;top:6px;}
+  .node.summit .node-marker{background:var(--summit);box-shadow:0 0 0 2px var(--summit);}
+
+  .rest-card{
+    font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);
+    padding:6px 0 6px 4px;letter-spacing:.02em;
+  }
+  .rest-card b{color:var(--ink);}
+
+  .card{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:6px;
+    padding:22px 24px;
+  }
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+  .camp-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--camp);font-weight:700;}
+  .node.summit .camp-label{color:var(--summit);}
+  .week-range{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft);white-space:nowrap;}
+  .card h3{font-family:'Fraunces',serif;font-size:22px;margin:2px 0 10px;font-weight:700;}
+  .terrain{display:flex;align-items:center;gap:6px;margin-bottom:12px;}
+  .terrain .tick{width:6px;height:14px;background:var(--line);border-radius:1px;}
+  .terrain .tick.on{background:var(--camp);}
+  .node.summit .terrain .tick.on{background:var(--summit);}
+  .terrain-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-soft);margin-left:4px;text-transform:uppercase;letter-spacing:.06em;}
+
+  .topics{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+  .topic{
+    font-size:12px;background:var(--route-soft);color:var(--route);padding:4px 10px;
+    border-radius:20px;font-weight:500;
+  }
+  .deliverable{
+    border-left:2px solid var(--camp); background:var(--camp-soft); padding:10px 14px;
+    font-size:13.5px;margin-bottom:16px;border-radius:0 4px 4px 0;
+  }
+  .node.summit .deliverable{border-left-color:var(--summit);background:var(--summit-soft);}
+  .deliverable b{font-family:'Space Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px;color:var(--ink);}
+
+  .checklist{list-style:none;margin:0;padding:0;display:grid;gap:8px;}
+  .checklist li{display:flex;align-items:flex-start;gap:10px;font-size:14px;cursor:pointer;}
+  .checklist input{margin-top:3px;accent-color:var(--route);width:15px;height:15px;flex-shrink:0;cursor:pointer;}
+  .checklist span.done{text-decoration:line-through;color:var(--ink-soft);}
+
+  /* POSTCARD VIEW */
+  #postcard{display:none;padding-top:30px;}
+  #postcard.active{display:block;}
+  .season{
+    background:var(--paper-card);border:1px solid var(--line);border-radius:6px;
+    padding:24px 26px;margin-bottom:18px;position:relative;
+  }
+  .season .when{font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--route);font-weight:700;margin-bottom:8px;}
+  .season h4{font-family:'Fraunces',serif;font-size:20px;margin:0 0 10px;font-weight:700;}
+  .season p{margin:0;color:var(--ink-soft);font-size:15px;}
+  .postcard-note{
+    font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);
+    border-top:1px dashed var(--line);margin-top:24px;padding-top:16px;line-height:1.7;
+  }
+
+  footer{
+    max-width:880px;margin:40px auto 0;padding:24px;border-top:1px solid var(--line);
+    font-family:'Space Mono',monospace;font-size:11.5px;color:var(--ink-soft);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+
+  @media(max-width:600px){
+    .stat-row{flex-direction:column;}
+    .stat{border-right:none;border-bottom:1px solid var(--line);}
+    .stat:last-child{border-bottom:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">Field Route · Full Stack → Cloud → ML</div>
+  <h1>Ibukun's route to <em>cloud & ML</em></h1>
+  <p>A trail from Python fundamentals through frontend, backend, and automation, up to the summit: machine learning and cloud deployment. Charted at 4 hours a week.</p>
+  <div class="stat-row">
+    <div class="stat"><span class="n">72 wks</span><span class="l">Total distance</span></div>
+    <div class="stat"><span class="n">~17 mo</span><span class="l">Estimated arrival</span></div>
+    <div class="stat"><span class="n">4 hrs</span><span class="l">Pace / week</span></div>
+    <div class="stat"><span class="n">7 + 3</span><span class="l">Camps + rest stops</span></div>
+  </div>
+</div>
+
+<div class="toggle-row">
+  <button class="toggle-btn active" id="btn-trail">Trail Log</button>
+  <button class="toggle-btn" id="btn-postcard">Postcard Home (for Dad)</button>
+</div>
+<div class="wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+  <div class="progress-label" id="progressLabel">Loading trail log…</div>
+</div>
+
+<div class="wrap">
+
+  <!-- TRAIL VIEW -->
+  <section id="trail" class="active">
+    <div class="trail-track">
+
+      <div class="node">
+        <div class="node-marker"></div>
+        <div class="card">
+          <div class="card-top"><span class="camp-label">Camp 1</span><span class="week-range">Weeks 1–10</span></div>
+          <h3>Python & Software-Engineering Foundations</h3>
+          <div class="terrain">
+            <div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+            <span class="terrain-label">Gentle climb</span>
+          </div>
+          <div class="topics">
+            <span class="topic">Comprehensions & OOP</span><span class="topic">File I/O & errors</span>
+            <span class="topic">Git & GitHub</span><span class="topic">Virtual environments</span>
+            <span class="topic">pytest basics</span><span class="topic">Readable code</span>
+          </div>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A CLI tool in a properly structured GitHub repo, with tests and a real README.</div>
+          <ul class="checklist" data-camp="camp1">
+            <li><input type="checkbox" id="camp1-1"><label for="camp1-1"><span>Comfortable with comprehensions, OOP, and error handling</span></label></li>
+            <li><input type="checkbox" id="camp1-2"><label for="camp1-2"><span>Set up Git/GitHub workflow — commits, branches, real repo</span></label></li>
+            <li><input type="checkbox" id="camp1-3"><label for="camp1-3"><span>Wrote first pytest tests</span></label></li>
+            <li><input type="checkbox" id="camp1-4"><label for="camp1-4"><span>Shipped the CLI tool with a clean README</span></label></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="node rest">
+        <div class="node-marker"></div>
+        <div class="rest-card"><b>Rest stop A</b> — Weeks 11–15 · review, catch-up, first-semester buffer</div>
+      </div>
+
+      <div class="node">
+        <div class="node-marker"></div>
+        <div class="card">
+          <div class="card-top"><span class="camp-label">Camp 2</span><span class="week-range">Weeks 16–21</span></div>
+          <h3>Automation</h3>
+          <div class="terrain">
+            <div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+            <span class="terrain-label">Gentle climb</span>
+          </div>
+          <div class="topics">
+            <span class="topic">File/folder scripting</span><span class="topic">Calling APIs</span>
+            <span class="topic">Scheduling tasks</span><span class="topic">Web scraping basics</span>
+          </div>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A script that automates a real, recurring annoyance — e.g. organizing files or pulling data from an API on a schedule.</div>
+          <ul class="checklist" data-camp="camp2">
+            <li><input type="checkbox" id="camp2-1"><label for="camp2-1"><span>Automated a file or folder task</span></label></li>
+            <li><input type="checkbox" id="camp2-2"><label for="camp2-2"><span>Pulled data from a live API</span></label></li>
+            <li><input type="checkbox" id="camp2-3"><label for="camp2-3"><span>Scraped a simple webpage responsibly</span></label></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-marker"></div>
+        <div class="card">
+          <div class="card-top"><span class="camp-label">Camp 3</span><span class="week-range">Weeks 22–29</span></div>
+          <h3>Backend Basics</h3>
+          <div class="terrain">
+            <div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div>
+            <span class="terrain-label">Steeper</span>
+          </div>
+          <div class="topics">
+            <span class="topic">Flask / FastAPI</span><span class="topic">REST routes</span>
+            <span class="topic">SQLite</span><span class="topic">Request/response cycle</span><span class="topic">Basic auth</span>
+          </div>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A small REST API backed by a real database.</div>
+          <ul class="checklist" data-camp="camp3">
+            <li><input type="checkbox" id="camp3-1"><label for="camp3-1"><span>Built routes with Flask or FastAPI</span></label></li>
+            <li><input type="checkbox" id="camp3-2"><label for="camp3-2"><span>Connected the API to SQLite</span></label></li>
+            <li><input type="checkbox" id="camp3-3"><label for="camp3-3"><span>Understands the request/response cycle</span></label></li>
+            <li><input type="checkbox" id="camp3-4"><label for="camp3-4"><span>API deployed locally and documented</span></label></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="node rest">
+        <div class="node-marker"></div>
+        <div class="rest-card"><b>Rest stop B</b> — Weeks 30–34 · exams, breaks, catch-up</div>
+      </div>
+
+      <div class="node">
+        <div class="node-marker"></div>
+        <div class="card">
+          <div class="card-top"><span class="camp-label">Camp 4</span><span class="week-range">Weeks 35–41</span></div>
+          <h3>Frontend Basics</h3>
+          <div class="terrain">
+            <div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
+            <span class="terrain-label">Gentle climb</span>
+          </div>
+          <div class="topics">
+            <span class="topic">HTML/CSS/JS</span><span class="topic">DOM manipulation</span>
+            <span class="topic">fetch() to her own API</span><span class="topic">Responsive layout</span>
+          </div>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A simple UI that talks live to the API built in Camp 3.</div>
+          <ul class="checklist" data-camp="camp4">
+            <li><input type="checkbox" id="camp4-1"><label for="camp4-1"><span>Built pages with HTML/CSS and made them responsive</span></label></li>
+            <li><input type="checkbox" id="camp4-2"><label for="camp4-2"><span>Used JS to manipulate the DOM</span></label></li>
+            <li><input type="checkbox" id="camp4-3"><label for="camp4-3"><span>Connected the frontend to her own backend with fetch()</span></label></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="node">
+        <div class="node-marker"></div>
+        <div class="card">
+          <div class="card-top"><span class="camp-label">Camp 5</span><span class="week-range">Weeks 42–50</span></div>
+          <h3>Data Handling & Intro ML</h3>
+          <div class="terrain">
+            <div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick"></div>
+            <span class="terrain-label">Steep</span>
+          </div>
+          <div class="topics">
+            <span class="topic">numpy & pandas</span><span class="topic">Data cleaning</span>
+            <span class="topic">matplotlib</span><span class="topic">Stats intuition</span>
+            <span class="topic">scikit-learn</span><span class="topic">Train/test split & metrics</span>
+          </div>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A trained model on a dataset she picks, with a short write-up of results.</div>
+          <ul class="checklist" data-camp="camp5">
+            <li><input type="checkbox" id="camp5-1"><label for="camp5-1"><span>Cleaned and explored a real dataset with pandas</span></label></li>
+            <li><input type="checkbox" id="camp5-2"><label for="camp5-2"><span>Visualized data with matplotlib</span></label></li>
+            <li><input type="checkbox" id="camp5-3"><label for="camp5-3"><span>Trained a regression or classification model</span></label></li>
+            <li><input type="checkbox" id="camp5-4"><label for="camp5-4"><span>Evaluated it and wrote up the results</span></label></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="node rest">
+        <div class="node-marker"></div>
+        <div class="rest-card"><b>Rest stop C</b> — Weeks 51–54 · review before the final ascent</div>
+      </div>
+
+      <div class="node">
+        <div class="node-marker"></div>
+        <div class="card">
+          <div class="card-top"><span class="camp-label">Camp 6</span><span class="week-range">Weeks 55–61</span></div>
+          <h3>Cloud Fundamentals</h3>
+          <div class="terrain">
+            <div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div>
+            <span class="terrain-label">Steeper</span>
+          </div>
+          <div class="topics">
+            <span class="topic">AWS basics (EC2, S3)</span><span class="topic">Deploying an app</span>
+            <span class="topic">SageMaker Studio Lab</span><span class="topic">Config & environments</span>
+          </div>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>Her Camp 3 API or Camp 5 model, live on AWS — not just running locally.</div>
+          <ul class="checklist" data-camp="camp6">
+            <li><input type="checkbox" id="camp6-1"><label for="camp6-1"><span>Understands VMs, storage, and basic AWS concepts</span></label></li>
+            <li><input type="checkbox" id="camp6-2"><label for="camp6-2"><span>Deployed an app or notebook to the cloud</span></label></li>
+            <li><input type="checkbox" id="camp6-3"><label for="camp6-3"><span>Ran an ML workflow on SageMaker Studio Lab</span></label></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="node summit">
+        <div class="node-marker"></div>
+        <div class="card">
+          <div class="card-top"><span class="camp-label">Summit</span><span class="week-range">Weeks 62–72</span></div>
+          <h3>Capstone</h3>
+          <div class="terrain">
+            <div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick on"></div>
+            <span class="terrain-label">Summit push</span>
+          </div>
+          <div class="topics">
+            <span class="topic">Model + API + UI, combined</span><span class="topic">Cloud deployment</span>
+            <span class="topic">Documentation</span><span class="topic">Portfolio polish</span>
+          </div>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A full portfolio project: trained model, backend API serving it, frontend demo, live on the cloud, documented on GitHub.</div>
+          <ul class="checklist" data-camp="camp7">
+            <li><input type="checkbox" id="camp7-1"><label for="camp7-1"><span>Combined model + API + frontend into one working app</span></label></li>
+            <li><input type="checkbox" id="camp7-2"><label for="camp7-2"><span>Deployed the full project live</span></label></li>
+            <li><input type="checkbox" id="camp7-3"><label for="camp7-3"><span>Documented it properly — README, repo, write-up</span></label></li>
+            <li><input type="checkbox" id="camp7-4"><label for="camp7-4"><span>Has a live link + repo she can show colleges or employers</span></label></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- POSTCARD VIEW -->
+  <section id="postcard">
+    <div class="season">
+      <div class="when">Now → mid fall</div>
+      <h4>Learning to build like a professional</h4>
+      <p>Ibukun starts with real programming fundamentals and picks up the habits professional developers use every day — organizing code, tracking changes, testing her work. She'll finish this stretch with her first real project saved to her own portfolio.</p>
+    </div>
+    <div class="season">
+      <div class="when">Winter → spring</div>
+      <h4>Building tools and websites</h4>
+      <p>She starts automating everyday tasks with code, then builds the two halves of a real website: the part users see (frontend) and the part that stores and serves data (backend). By spring, she'll have a small working website of her own.</p>
+    </div>
+    <div class="season">
+      <div class="when">Summer</div>
+      <h4>Into AI and machine learning</h4>
+      <p>With more free time over the summer, she moves into the part her dad's been asking about: teaching computers to find patterns in data and make predictions. She'll train her first real machine learning model.</p>
+    </div>
+    <div class="season">
+      <div class="when">Fall → winter, year two</div>
+      <h4>Cloud, and the final project</h4>
+      <p>She learns to launch her projects on the same cloud platforms companies like Netflix and Amazon run on. The program ends with a capstone: one complete project — website, AI model, and cloud hosting — built entirely by her, live on the internet.</p>
+    </div>
+    <div class="postcard-note">
+      Pace: 4 hours a week · Estimated total time: ~17 months, including built-in breaks for exams and holidays.<br>
+      This mirrors the breadth of a first-year college CS sequence — it's a real program, not a weekend course.
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span>Ibukun's Route to Cloud & ML</span>
+  <span id="footerProgress">—</span>
+</footer>
+
+<script>
+  const btnTrail = document.getElementById('btn-trail');
+  const btnPostcard = document.getElementById('btn-postcard');
+  const trail = document.getElementById('trail');
+  const postcard = document.getElementById('postcard');
+
+  btnTrail.addEventListener('click', () => {
+    trail.classList.add('active'); postcard.classList.remove('active');
+    btnTrail.classList.add('active'); btnPostcard.classList.remove('active');
+  });
+  btnPostcard.addEventListener('click', () => {
+    postcard.classList.add('active'); trail.classList.remove('active');
+    btnPostcard.classList.add('active'); btnTrail.classList.remove('active');
+  });
+
+  const checkboxes = Array.from(document.querySelectorAll('.checklist input[type=checkbox]'));
+
+  function updateProgress(){
+    const total = checkboxes.length;
+    const done = checkboxes.filter(c => c.checked).length;
+    const pct = total ? Math.round((done/total)*100) : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = `${done} of ${total} waypoints checked · ${pct}% of the trail logged`;
+    document.getElementById('footerProgress').textContent = `${done}/${total} waypoints checked`;
+    checkboxes.forEach(c => {
+      const span = c.parentElement.querySelector('span');
+      if(span){ span.classList.toggle('done', c.checked); }
+    });
+  }
+
+  async function loadState(){
+    for(const cb of checkboxes){
+      try{
+        const res = await window.storage.get('waypoint:' + cb.id, false);
+        if(res && res.value === 'true'){ cb.checked = true; }
+      }catch(e){ /* key not set yet, leave unchecked */ }
+    }
+    updateProgress();
+  }
+
+  checkboxes.forEach(cb => {
+    cb.addEventListener('change', async () => {
+      updateProgress();
+      try{
+        await window.storage.set('waypoint:' + cb.id, String(cb.checked), false);
+      }catch(e){ console.error('Could not save progress', e); }
+    });
+  });
+
+  loadState();
+</script>
+
+</body>
+</html>
