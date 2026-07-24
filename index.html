@@ -5,165 +5,270 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ibukun's Route to Cloud & ML</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#EEF1E6;
-    --paper-card:#F8F9F3;
-    --ink:#1F2E28;
-    --ink-soft:#4C5A52;
-    --line:#C7CDB8;
-    --route:#1F5C56;
-    --route-soft:#DCE6E1;
-    --camp:#C98A2C;
-    --camp-soft:#F3E3C6;
-    --summit:#8C4A3B;
-    --summit-soft:#EAD9D3;
+    --bg:#0D1220;
+    --bg-deep:#080B15;
+    --card:rgba(255,255,255,.045);
+    --card-hover:rgba(255,255,255,.075);
+    --border:rgba(255,255,255,.10);
+    --ink:#EEF1F8;
+    --ink-soft:#9BA4BC;
+    --ink-dim:#6C7690;
+    --route:#4FD8CE;
+    --route-glow:rgba(79,216,206,.45);
+    --camp:#FFB648;
+    --camp-glow:rgba(255,182,72,.45);
+    --summit:#FF7A6E;
+    --summit-glow:rgba(255,122,110,.45);
+    --gold:#FFD166;
   }
   *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
   body{
     margin:0;
-    background:var(--paper);
-    background-image:
-      radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0);
-    background-size: 26px 26px;
+    background:
+      radial-gradient(ellipse 900px 600px at 12% -10%, rgba(79,216,206,.16), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 105% 8%, rgba(255,182,72,.13), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 50% 120%, rgba(255,122,110,.10), transparent 60%),
+      var(--bg);
     color:var(--ink);
     font-family:'Inter',sans-serif;
-    line-height:1.5;
+    line-height:1.6;
+    overflow-x:hidden;
+    position:relative;
   }
-  .wrap{max-width:880px;margin:0 auto;padding:0 24px 80px;}
+  /* starfield */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+    background-image:
+      radial-gradient(1.5px 1.5px at 20px 40px, #fff, transparent),
+      radial-gradient(1px 1px at 120px 120px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 210px 60px, #fff, transparent),
+      radial-gradient(1px 1px at 300px 180px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 380px 30px, #fff, transparent),
+      radial-gradient(1px 1px at 60px 220px, #fff, transparent),
+      radial-gradient(1px 1px at 430px 260px, #fff, transparent);
+    background-repeat:repeat; background-size:460px 300px;
+    animation:twinkle 5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle{from{opacity:.35;}to{opacity:.65;}}
+  body.preloading{overflow:hidden;height:100vh;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 100px;position:relative;z-index:1;}
 
-  /* HERO */
-  .hero{padding:64px 24px 40px;text-align:left;max-width:880px;margin:0 auto;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---------- PRELOADER ---------- */
+  #preloader{
+    position:fixed;inset:0;z-index:9999;background:var(--bg-deep);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  #preloader.hide{opacity:0;visibility:hidden;pointer-events:none;}
+  #preloader .compass{width:80px;height:80px;filter:drop-shadow(0 0 14px var(--camp-glow));}
+  #preloader .compass svg{width:100%;height:100%;overflow:visible;}
+  #preloader .ring{fill:none;stroke:rgba(255,255,255,.12);stroke-width:2;}
+  #preloader .ring-arc{
+    fill:none;stroke:var(--camp);stroke-width:2.5;stroke-linecap:round;
+    stroke-dasharray:145;stroke-dashoffset:145;
+    animation:ringDraw 1.4s ease-in-out infinite;
+    transform-origin:40px 40px;
+  }
+  @keyframes ringDraw{
+    0%{stroke-dashoffset:145;transform:rotate(0deg);}
+    50%{stroke-dashoffset:36;transform:rotate(160deg);}
+    100%{stroke-dashoffset:145;transform:rotate(360deg);}
+  }
+  #preloader .needle{stroke:var(--route);stroke-width:2.5;stroke-linecap:round;transform-origin:40px 40px;animation:needleSpin 1.4s ease-in-out infinite;}
+  @keyframes needleSpin{0%{transform:rotate(-20deg);}50%{transform:rotate(200deg);}100%{transform:rotate(340deg);}}
+  #preloader .pre-label{font-family:'Space Mono',monospace;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);display:flex;align-items:center;gap:2px;}
+  #preloader .pre-label .dots span{animation:dotFade 1.4s infinite;opacity:0;}
+  #preloader .pre-label .dots span:nth-child(2){animation-delay:.2s;}
+  #preloader .pre-label .dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes dotFade{0%,100%{opacity:0;}40%{opacity:1;}}
+  #preloader .pre-track{width:150px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+  #preloader .pre-track i{display:block;height:100%;width:40%;background:linear-gradient(90deg,var(--route),var(--gold));animation:preSlide 1.1s ease-in-out infinite;}
+  @keyframes preSlide{0%{transform:translateX(-120%);}100%{transform:translateX(360%);}}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:76px 24px 34px;max-width:900px;margin:0 auto;position:relative;z-index:1;}
+  .hero-badge{position:absolute; top:70px; right:24px; width:92px; height:92px; opacity:0; filter:drop-shadow(0 0 16px var(--route-glow));}
+  body.loaded .hero-badge{ animation:spinIn 1s .5s cubic-bezier(.2,.8,.2,1) forwards; }
+  @keyframes spinIn{from{opacity:0;transform:rotate(-30deg) scale(.6);}to{opacity:1;transform:rotate(0) scale(1);}}
   .eyebrow{
-    font-family:'Space Mono',monospace;
-    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--route); font-weight:700; margin-bottom:14px;
-    display:flex; align-items:center; gap:10px;
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--route); font-weight:700; margin-bottom:18px; display:flex; align-items:center; gap:10px; opacity:0;
   }
-  .eyebrow::before{content:"";width:22px;height:1px;background:var(--route);display:inline-block;}
+  body.loaded .eyebrow{ animation:fadeUp .7s ease forwards; }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--route);display:inline-block;box-shadow:0 0 8px var(--route-glow);}
   h1{
-    font-family:'Fraunces',serif; font-weight:900; font-size:clamp(34px,5vw,54px);
-    line-height:1.04; margin:0 0 18px; letter-spacing:-.01em;
+    font-family:'Fraunces',serif; font-weight:900; font-size:clamp(38px,5.6vw,60px);
+    line-height:1.03; margin:0 0 22px; letter-spacing:-.01em; max-width:700px; opacity:0;
   }
-  h1 em{font-style:italic;font-weight:600;color:var(--route);}
-  .hero p{max-width:600px;color:var(--ink-soft);font-size:16.5px;margin:0 0 28px;}
+  body.loaded h1{ animation:fadeUp .8s .1s ease forwards; }
+  h1 em{font-style:italic;font-weight:600;background:linear-gradient(90deg,var(--route),#8FE9E1);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  h1 .name{background:linear-gradient(90deg,var(--camp),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p.lede{max-width:600px;color:var(--ink-soft);font-size:17.5px;margin:0 0 36px;opacity:0;}
+  body.loaded .hero p.lede{ animation:fadeUp .8s .22s ease forwards; }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 
-  .stat-row{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
-  .stat{flex:1;min-width:130px;padding:16px 18px;border-right:1px solid var(--line);}
-  .stat:last-child{border-right:none;}
-  .stat .n{font-family:'Fraunces',serif;font-weight:700;font-size:22px;display:block;}
-  .stat .l{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}
+  .stat-row{display:flex;flex-wrap:wrap;gap:12px;opacity:0;}
+  body.loaded .stat-row{ animation:fadeUp .8s .32s ease forwards; }
+  .stat{
+    flex:1;min-width:150px;padding:18px 20px;border-radius:12px;
+    background:var(--card);border:1px solid var(--border);backdrop-filter:blur(10px);
+    transition:transform .25s ease, border-color .25s ease;
+  }
+  .stat:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.22);}
+  .stat .n{font-family:'Fraunces',serif;font-weight:700;font-size:21px;display:block;color:var(--ink);}
+  .stat .l{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);}
 
-  /* TOGGLE */
-  .toggle-row{display:flex;gap:10px;margin:30px auto 6px;max-width:880px;padding:0 24px;}
+  /* ---------- TOGGLE ---------- */
+  .toggle-row{display:flex;gap:10px;margin:36px auto 6px;max-width:900px;padding:0 24px;flex-wrap:wrap;position:relative;z-index:1;}
   .toggle-btn{
     font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
-    padding:10px 16px;border:1px solid var(--ink);background:transparent;color:var(--ink);
-    cursor:pointer;border-radius:2px;transition:all .15s ease;
+    padding:12px 20px;border:1px solid var(--border);background:var(--card);color:var(--ink-soft);
+    cursor:pointer;border-radius:30px;transition:all .2s ease;backdrop-filter:blur(10px);
   }
-  .toggle-btn.active{background:var(--ink);color:var(--paper);}
-  .toggle-btn:not(.active):hover{background:var(--route-soft);}
+  .toggle-btn.active{background:linear-gradient(90deg,var(--route),#2FA89D);color:#06231F;border-color:transparent;font-weight:700;box-shadow:0 0 20px var(--route-glow);}
+  .toggle-btn:not(.active):hover{background:var(--card-hover);color:var(--ink);border-color:rgba(255,255,255,.22);}
 
-  /* PROGRESS */
-  .progress-bar-outer{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:18px;}
-  .progress-bar-inner{height:100%;background:var(--route);width:0%;transition:width .4s ease;}
-  .progress-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft);margin-top:8px;letter-spacing:.03em;}
+  /* ---------- PROGRESS ---------- */
+  .progress-card{max-width:900px;margin:26px auto 0;padding:0 24px;position:relative;z-index:1;}
+  .progress-bar-outer{height:8px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden;margin-top:8px;position:relative;}
+  .progress-bar-inner{height:100%;background:linear-gradient(90deg,var(--route),var(--camp),var(--summit));width:0%;transition:width .6s cubic-bezier(.3,.8,.3,1);position:relative;box-shadow:0 0 12px var(--camp-glow);}
+  .progress-bar-inner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:shimmer 2.2s ease-in-out infinite;}
+  @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+  .progress-label{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:10px;letter-spacing:.03em;}
 
-  /* TRAIL VIEW */
-  #trail{display:none;padding-top:26px;}
+  /* ---------- TRAIL ---------- */
+  #trail{display:none;padding-top:40px;}
   #trail.active{display:block;}
-  .trail-track{position:relative;padding-left:34px;}
-  .trail-track::before{
-    content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;
-    background-image:linear-gradient(var(--route) 60%, transparent 0);
-    background-size:2px 10px; background-repeat:repeat-y;
-  }
-  .node{position:relative;margin-bottom:34px;}
-  .node-marker{
-    position:absolute;left:-34px;top:2px;width:20px;height:20px;border-radius:50%;
-    background:var(--camp); border:3px solid var(--paper); box-shadow:0 0 0 2px var(--camp);
-  }
-  .node.rest .node-marker{background:var(--ink-soft);box-shadow:0 0 0 2px var(--ink-soft);width:12px;height:12px;left:-30px;top:6px;}
-  .node.summit .node-marker{background:var(--summit);box-shadow:0 0 0 2px var(--summit);}
+  .trail-track{position:relative;padding-left:40px;}
+  .trail-line-svg{position:absolute;left:0;top:0;width:3px;height:100%;overflow:visible;}
+  .trail-line-svg path{fill:none; stroke:url(#lineGrad); stroke-width:2.5; stroke-dasharray:8 8; stroke-dashoffset:2000; stroke-linecap:round; animation:drawLine 2.5s ease forwards;}
+  @keyframes drawLine{to{stroke-dashoffset:0;}}
 
-  .rest-card{
-    font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);
-    padding:6px 0 6px 4px;letter-spacing:.02em;
+  .node{position:relative;margin-bottom:40px;opacity:0;transform:translateY(24px);transition:opacity .6s ease, transform .6s ease;}
+  .node.revealed{opacity:1;transform:translateY(0);}
+
+  .node-marker{
+    position:absolute;left:-40px;top:6px;width:26px;height:26px;border-radius:50%;
+    background:rgba(255,182,72,.16); border:2px solid var(--camp); z-index:2;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px var(--camp-glow);
   }
+  .node-marker svg{width:13px;height:13px;stroke:var(--camp);}
+  .node.summit .node-marker{background:rgba(255,122,110,.16);border-color:var(--summit);box-shadow:0 0 16px var(--summit-glow);}
+  .node.summit .node-marker svg{stroke:var(--summit);}
+  .node.rest .node-marker{background:transparent;border:1.5px dashed var(--ink-dim);width:14px;height:14px;left:-35px;top:8px;box-shadow:none;}
+
+  .node.current .node-marker{animation:pulseRing 1.8s ease-in-out infinite;}
+  @keyframes pulseRing{0%{box-shadow:0 0 0 0 var(--camp-glow), 0 0 14px var(--camp-glow);}70%{box-shadow:0 0 0 12px rgba(255,182,72,0), 0 0 14px var(--camp-glow);}100%{box-shadow:0 0 0 0 rgba(255,182,72,0), 0 0 14px var(--camp-glow);}}
+
+  .here-badge{display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--camp);background:rgba(255,182,72,.12);padding:5px 12px;border-radius:20px;margin-bottom:12px;border:1px solid rgba(255,182,72,.3);}
+  .here-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--camp);box-shadow:0 0 6px var(--camp-glow);animation:blink 1.4s infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+  .rest-card{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);padding:9px 0 9px 4px;letter-spacing:.02em;}
   .rest-card b{color:var(--ink);}
 
   .card{
-    background:var(--paper-card);border:1px solid var(--line);border-radius:6px;
-    padding:22px 24px;
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:28px 30px; backdrop-filter:blur(14px);
+    box-shadow:0 4px 20px rgba(0,0,0,.25);
+    transition:box-shadow .3s ease, transform .3s ease, border-color .3s ease, background .3s ease;
+    position:relative; overflow:hidden;
   }
-  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
-  .camp-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--camp);font-weight:700;}
+  .card::before{content:"";position:absolute;top:0;left:26px;width:38px;height:3px;background:linear-gradient(90deg,var(--camp),var(--gold));border-radius:0 0 4px 4px;box-shadow:0 0 10px var(--camp-glow);}
+  .node.summit .card::before{background:linear-gradient(90deg,var(--summit),var(--gold));box-shadow:0 0 10px var(--summit-glow);}
+  .card:hover{box-shadow:0 16px 40px rgba(0,0,0,.35);transform:translateY(-4px);border-color:rgba(255,255,255,.2);background:var(--card-hover);}
+
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:4px;}
+  .camp-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--camp);font-weight:700;}
   .node.summit .camp-label{color:var(--summit);}
-  .week-range{font-family:'Space Mono',monospace;font-size:11px;color:var(--ink-soft);white-space:nowrap;}
-  .card h3{font-family:'Fraunces',serif;font-size:22px;margin:2px 0 10px;font-weight:700;}
-  .terrain{display:flex;align-items:center;gap:6px;margin-bottom:12px;}
-  .terrain .tick{width:6px;height:14px;background:var(--line);border-radius:1px;}
-  .terrain .tick.on{background:var(--camp);}
-  .node.summit .terrain .tick.on{background:var(--summit);}
-  .terrain-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-soft);margin-left:4px;text-transform:uppercase;letter-spacing:.06em;}
+  .card h3{font-family:'Fraunces',serif;font-size:24px;margin:5px 0 14px;font-weight:700;color:var(--ink);}
 
-  .topics{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
-  .topic{
-    font-size:12px;background:var(--route-soft);color:var(--route);padding:4px 10px;
-    border-radius:20px;font-weight:500;
-  }
-  .deliverable{
-    border-left:2px solid var(--camp); background:var(--camp-soft); padding:10px 14px;
-    font-size:13.5px;margin-bottom:16px;border-radius:0 4px 4px 0;
-  }
-  .node.summit .deliverable{border-left-color:var(--summit);background:var(--summit-soft);}
-  .deliverable b{font-family:'Space Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:4px;color:var(--ink);}
+  .terrain{display:flex;align-items:center;gap:6px;margin-bottom:16px;}
+  .terrain .tick{width:6px;height:14px;background:rgba(255,255,255,.12);border-radius:1px;}
+  .terrain .tick.on{background:var(--camp);box-shadow:0 0 6px var(--camp-glow);}
+  .node.summit .terrain .tick.on{background:var(--summit);box-shadow:0 0 6px var(--summit-glow);}
+  .terrain-label{font-family:'Space Mono',monospace;font-size:10px;color:var(--ink-dim);margin-left:4px;text-transform:uppercase;letter-spacing:.06em;}
 
-  .checklist{list-style:none;margin:0;padding:0;display:grid;gap:8px;}
-  .checklist li{display:flex;align-items:flex-start;gap:10px;font-size:14px;cursor:pointer;}
-  .checklist input{margin-top:3px;accent-color:var(--route);width:15px;height:15px;flex-shrink:0;cursor:pointer;}
-  .checklist span.done{text-decoration:line-through;color:var(--ink-soft);}
+  .topics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+  .topic{font-size:12.5px;background:rgba(79,216,206,.12);color:var(--route);padding:6px 13px;border-radius:20px;font-weight:500;border:1px solid rgba(79,216,206,.22);}
 
-  /* POSTCARD VIEW */
-  #postcard{display:none;padding-top:30px;}
+  .deliverable{border-left:2.5px solid var(--camp); background:rgba(255,182,72,.08); padding:13px 17px;font-size:13.5px;margin-bottom:20px;border-radius:0 10px 10px 0;color:var(--ink-soft);}
+  .node.summit .deliverable{border-left-color:var(--summit);background:rgba(255,122,110,.08);}
+  .deliverable b{font-family:'Space Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px;color:var(--ink);}
+
+  .checklist{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+  .checklist li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink-soft);}
+  .checklist label{display:flex;align-items:flex-start;gap:11px;cursor:pointer;}
+  .checklist input{margin-top:3px;accent-color:var(--route);width:17px;height:17px;flex-shrink:0;cursor:pointer;}
+  .checklist span.done{text-decoration:line-through;color:var(--ink-dim);}
+
+  .camp-complete-tag{display:none;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:11px;color:var(--route);background:rgba(79,216,206,.12);padding:6px 12px;border-radius:20px;margin-top:16px;width:fit-content;border:1px solid rgba(79,216,206,.28);}
+  .camp-complete-tag.show{display:flex;animation:popIn .4s cubic-bezier(.3,1.4,.4,1);}
+  @keyframes popIn{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+  /* ---------- POSTCARD ---------- */
+  #postcard{display:none;padding-top:40px;}
   #postcard.active{display:block;}
-  .season{
-    background:var(--paper-card);border:1px solid var(--line);border-radius:6px;
-    padding:24px 26px;margin-bottom:18px;position:relative;
-  }
-  .season .when{font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--route);font-weight:700;margin-bottom:8px;}
-  .season h4{font-family:'Fraunces',serif;font-size:20px;margin:0 0 10px;font-weight:700;}
-  .season p{margin:0;color:var(--ink-soft);font-size:15px;}
-  .postcard-note{
-    font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-soft);
-    border-top:1px dashed var(--line);margin-top:24px;padding-top:16px;line-height:1.7;
-  }
+  .season{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 30px;margin-bottom:18px;position:relative;backdrop-filter:blur(14px);opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease, border-color .3s ease;}
+  .season:hover{border-color:rgba(255,255,255,.2);}
+  .season.revealed{opacity:1;transform:translateY(0);}
+  .season .step-num{font-family:'Fraunces',serif;font-weight:900;font-size:38px;background:linear-gradient(180deg,rgba(255,182,72,.35),rgba(255,182,72,.08));-webkit-background-clip:text;background-clip:text;color:transparent;position:absolute;top:18px;right:24px;line-height:1;}
+  .season .when{font-family:'Space Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--route);font-weight:700;margin-bottom:9px;}
+  .season h4{font-family:'Fraunces',serif;font-size:22px;margin:0 0 11px;font-weight:700;max-width:80%;color:var(--ink);}
+  .season p{margin:0;color:var(--ink-soft);font-size:15.5px;max-width:88%;}
+  .postcard-note{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-dim);border-top:1px dashed var(--border);margin-top:28px;padding-top:20px;line-height:1.8;}
 
-  footer{
-    max-width:880px;margin:40px auto 0;padding:24px;border-top:1px solid var(--line);
-    font-family:'Space Mono',monospace;font-size:11.5px;color:var(--ink-soft);
-    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
-  }
+  footer{max-width:900px;margin:48px auto 0;padding:28px 24px;border-top:1px solid var(--border);font-family:'Space Mono',monospace;font-size:11.5px;color:var(--ink-dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;position:relative;z-index:1;}
+
+  .confetti-piece{position:fixed;top:-10px;width:8px;height:8px;pointer-events:none;z-index:999;border-radius:2px;}
+
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--route); outline-offset:3px; border-radius:2px;}
 
   @media(max-width:600px){
     .stat-row{flex-direction:column;}
-    .stat{border-right:none;border-bottom:1px solid var(--line);}
-    .stat:last-child{border-bottom:none;}
+    .hero-badge{display:none;}
+    .card{padding:22px;}
+    .season{padding:22px;}
   }
 </style>
 </head>
-<body>
+<body class="preloading">
+
+<div id="preloader">
+  <div class="compass">
+    <svg viewBox="0 0 80 80">
+      <circle class="ring" cx="40" cy="40" r="24"/>
+      <circle class="ring-arc" cx="40" cy="40" r="24"/>
+      <line class="needle" x1="40" y1="40" x2="40" y2="18"/>
+      <circle cx="40" cy="40" r="2.5" fill="#4FD8CE"/>
+    </svg>
+  </div>
+  <div class="pre-label">Charting the route<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+  <div class="pre-track"><i></i></div>
+</div>
 
 <div class="hero">
+  <svg class="hero-badge" viewBox="0 0 100 100" fill="none">
+    <defs><linearGradient id="badgeGrad" x1="0" y1="0" x2="100" y2="100"><stop offset="0%" stop-color="#FFB648"/><stop offset="100%" stop-color="#4FD8CE"/></linearGradient></defs>
+    <circle cx="50" cy="50" r="46" stroke="url(#badgeGrad)" stroke-width="2" stroke-dasharray="4 5"/>
+    <path d="M30 55 L45 68 L72 34" stroke="#4FD8CE" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
   <div class="eyebrow">Field Route · Full Stack → Cloud → ML</div>
-  <h1>Ibukun's route to <em>cloud & ML</em></h1>
-  <p>A trail from Python fundamentals through frontend, backend, and automation, up to the summit: machine learning and cloud deployment. Charted at 4 hours a week.</p>
+  <h1><span class="name">Ibukun's</span> route to <em>cloud & ML</em></h1>
+  <p class="lede">A guided path from Python fundamentals through frontend, backend, and automation, all the way up to the summit: machine learning and cloud deployment.</p>
   <div class="stat-row">
-    <div class="stat"><span class="n">72 wks</span><span class="l">Total distance</span></div>
-    <div class="stat"><span class="n">~17 mo</span><span class="l">Estimated arrival</span></div>
-    <div class="stat"><span class="n">4 hrs</span><span class="l">Pace / week</span></div>
-    <div class="stat"><span class="n">7 + 3</span><span class="l">Camps + rest stops</span></div>
+    <div class="stat"><span class="n">7 Camps</span><span class="l">Skill milestones</span></div>
+    <div class="stat"><span class="n">3 Rest Stops</span><span class="l">Review & catch-up</span></div>
+    <div class="stat"><span class="n">Steady pace</span><span class="l">Consistent weekly sessions</span></div>
+    <div class="stat"><span class="n">1 Summit</span><span class="l">Live capstone project</span></div>
   </div>
 </div>
 
@@ -171,9 +276,9 @@
   <button class="toggle-btn active" id="btn-trail">Trail Log</button>
   <button class="toggle-btn" id="btn-postcard">Postcard Home (for Dad)</button>
 </div>
-<div class="wrap">
-  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+<div class="progress-card">
   <div class="progress-label" id="progressLabel">Loading trail log…</div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
 </div>
 
 <div class="wrap">
@@ -181,11 +286,16 @@
   <!-- TRAIL VIEW -->
   <section id="trail" class="active">
     <div class="trail-track">
+      <svg class="trail-line-svg" viewBox="0 0 3 1000" preserveAspectRatio="none">
+        <defs><linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4FD8CE"/><stop offset="50%" stop-color="#FFB648"/><stop offset="100%" stop-color="#FF7A6E"/></linearGradient></defs>
+        <path d="M1.5,0 L1.5,1000"/>
+      </svg>
 
-      <div class="node">
-        <div class="node-marker"></div>
+      <div class="node" data-camp="camp1">
+        <div class="node-marker"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M4 6l6 6-6 6M14 18h6"/></svg></div>
         <div class="card">
-          <div class="card-top"><span class="camp-label">Camp 1</span><span class="week-range">Weeks 1–10</span></div>
+          <span class="here-badge" style="display:none;"><span class="dot"></span>You are here</span>
+          <div class="card-top"><span class="camp-label">Camp 1</span></div>
           <h3>Python & Software-Engineering Foundations</h3>
           <div class="terrain">
             <div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
@@ -197,46 +307,50 @@
             <span class="topic">pytest basics</span><span class="topic">Readable code</span>
           </div>
           <div class="deliverable"><b>Trail marker · Deliverable</b>A CLI tool in a properly structured GitHub repo, with tests and a real README.</div>
-          <ul class="checklist" data-camp="camp1">
-            <li><input type="checkbox" id="camp1-1"><label for="camp1-1"><span>Comfortable with comprehensions, OOP, and error handling</span></label></li>
-            <li><input type="checkbox" id="camp1-2"><label for="camp1-2"><span>Set up Git/GitHub workflow — commits, branches, real repo</span></label></li>
-            <li><input type="checkbox" id="camp1-3"><label for="camp1-3"><span>Wrote first pytest tests</span></label></li>
-            <li><input type="checkbox" id="camp1-4"><label for="camp1-4"><span>Shipped the CLI tool with a clean README</span></label></li>
+          <ul class="checklist">
+            <li><label><input type="checkbox" id="camp1-1"><span>Comfortable with comprehensions, OOP, and error handling</span></label></li>
+            <li><label><input type="checkbox" id="camp1-2"><span>Set up a Git/GitHub workflow — commits, branches, a real repo</span></label></li>
+            <li><label><input type="checkbox" id="camp1-3"><span>Wrote her first pytest tests</span></label></li>
+            <li><label><input type="checkbox" id="camp1-4"><span>Shipped the CLI tool with a clean README</span></label></li>
           </ul>
+          <div class="camp-complete-tag">✓ Camp cleared</div>
         </div>
       </div>
 
       <div class="node rest">
         <div class="node-marker"></div>
-        <div class="rest-card"><b>Rest stop A</b> — Weeks 11–15 · review, catch-up, first-semester buffer</div>
+        <div class="rest-card"><b>Rest stop A</b> — review, catch-up, and a breather before the next climb</div>
       </div>
 
-      <div class="node">
-        <div class="node-marker"></div>
+      <div class="node" data-camp="camp2">
+        <div class="node-marker"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18"/><circle cx="6" cy="6" r=".6" fill="currentColor"/></svg></div>
         <div class="card">
-          <div class="card-top"><span class="camp-label">Camp 2</span><span class="week-range">Weeks 16–21</span></div>
-          <h3>Automation</h3>
+          <span class="here-badge" style="display:none;"><span class="dot"></span>You are here</span>
+          <div class="card-top"><span class="camp-label">Camp 2</span></div>
+          <h3>Frontend Basics</h3>
           <div class="terrain">
             <div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
             <span class="terrain-label">Gentle climb</span>
           </div>
           <div class="topics">
-            <span class="topic">File/folder scripting</span><span class="topic">Calling APIs</span>
-            <span class="topic">Scheduling tasks</span><span class="topic">Web scraping basics</span>
+            <span class="topic">HTML/CSS/JS</span><span class="topic">DOM manipulation</span>
+            <span class="topic">Responsive layout</span><span class="topic">fetch() basics</span>
           </div>
-          <div class="deliverable"><b>Trail marker · Deliverable</b>A script that automates a real, recurring annoyance — e.g. organizing files or pulling data from an API on a schedule.</div>
-          <ul class="checklist" data-camp="camp2">
-            <li><input type="checkbox" id="camp2-1"><label for="camp2-1"><span>Automated a file or folder task</span></label></li>
-            <li><input type="checkbox" id="camp2-2"><label for="camp2-2"><span>Pulled data from a live API</span></label></li>
-            <li><input type="checkbox" id="camp2-3"><label for="camp2-3"><span>Scraped a simple webpage responsibly</span></label></li>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A polished, responsive static site — the frontend she'll later connect to a real backend in Camp 3.</div>
+          <ul class="checklist">
+            <li><label><input type="checkbox" id="camp2-1"><span>Built pages with HTML/CSS and made them responsive</span></label></li>
+            <li><label><input type="checkbox" id="camp2-2"><span>Used JS to manipulate the DOM</span></label></li>
+            <li><label><input type="checkbox" id="camp2-3"><span>Learned the basics of fetch() for calling APIs</span></label></li>
           </ul>
+          <div class="camp-complete-tag">✓ Camp cleared</div>
         </div>
       </div>
 
-      <div class="node">
-        <div class="node-marker"></div>
+      <div class="node" data-camp="camp3">
+        <div class="node-marker"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="6" rx="1"/><rect x="4" y="14" width="16" height="6" rx="1"/><circle cx="8" cy="7" r=".6" fill="currentColor"/><circle cx="8" cy="17" r=".6" fill="currentColor"/></svg></div>
         <div class="card">
-          <div class="card-top"><span class="camp-label">Camp 3</span><span class="week-range">Weeks 22–29</span></div>
+          <span class="here-badge" style="display:none;"><span class="dot"></span>You are here</span>
+          <div class="card-top"><span class="camp-label">Camp 3</span></div>
           <h3>Backend Basics</h3>
           <div class="terrain">
             <div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div>
@@ -246,47 +360,51 @@
             <span class="topic">Flask / FastAPI</span><span class="topic">REST routes</span>
             <span class="topic">SQLite</span><span class="topic">Request/response cycle</span><span class="topic">Basic auth</span>
           </div>
-          <div class="deliverable"><b>Trail marker · Deliverable</b>A small REST API backed by a real database.</div>
-          <ul class="checklist" data-camp="camp3">
-            <li><input type="checkbox" id="camp3-1"><label for="camp3-1"><span>Built routes with Flask or FastAPI</span></label></li>
-            <li><input type="checkbox" id="camp3-2"><label for="camp3-2"><span>Connected the API to SQLite</span></label></li>
-            <li><input type="checkbox" id="camp3-3"><label for="camp3-3"><span>Understands the request/response cycle</span></label></li>
-            <li><input type="checkbox" id="camp3-4"><label for="camp3-4"><span>API deployed locally and documented</span></label></li>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A REST API backed by a real database — then wired up live to the Camp 2 frontend.</div>
+          <ul class="checklist">
+            <li><label><input type="checkbox" id="camp3-1"><span>Built routes with Flask or FastAPI</span></label></li>
+            <li><label><input type="checkbox" id="camp3-2"><span>Connected the API to SQLite</span></label></li>
+            <li><label><input type="checkbox" id="camp3-3"><span>Understands the request/response cycle</span></label></li>
+            <li><label><input type="checkbox" id="camp3-4"><span>Connected her Camp 2 frontend to this live API</span></label></li>
           </ul>
+          <div class="camp-complete-tag">✓ Camp cleared</div>
         </div>
       </div>
 
       <div class="node rest">
         <div class="node-marker"></div>
-        <div class="rest-card"><b>Rest stop B</b> — Weeks 30–34 · exams, breaks, catch-up</div>
+        <div class="rest-card"><b>Rest stop B</b> — a pause to review before automation and machine learning</div>
       </div>
 
-      <div class="node">
-        <div class="node-marker"></div>
+      <div class="node" data-camp="camp4">
+        <div class="node-marker"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.2-1.6l2-1.6-2-3.4-2.4.8a7 7 0 00-2.8-1.6L13 2h-4l-.6 2.6a7 7 0 00-2.8 1.6l-2.4-.8-2 3.4 2 1.6A7 7 0 005 12"/></svg></div>
         <div class="card">
-          <div class="card-top"><span class="camp-label">Camp 4</span><span class="week-range">Weeks 35–41</span></div>
-          <h3>Frontend Basics</h3>
+          <span class="here-badge" style="display:none;"><span class="dot"></span>You are here</span>
+          <div class="card-top"><span class="camp-label">Camp 4</span></div>
+          <h3>Automation</h3>
           <div class="terrain">
             <div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div>
             <span class="terrain-label">Gentle climb</span>
           </div>
           <div class="topics">
-            <span class="topic">HTML/CSS/JS</span><span class="topic">DOM manipulation</span>
-            <span class="topic">fetch() to her own API</span><span class="topic">Responsive layout</span>
+            <span class="topic">File/folder scripting</span><span class="topic">Calling APIs</span>
+            <span class="topic">Scheduling tasks</span><span class="topic">Web scraping basics</span>
           </div>
-          <div class="deliverable"><b>Trail marker · Deliverable</b>A simple UI that talks live to the API built in Camp 3.</div>
-          <ul class="checklist" data-camp="camp4">
-            <li><input type="checkbox" id="camp4-1"><label for="camp4-1"><span>Built pages with HTML/CSS and made them responsive</span></label></li>
-            <li><input type="checkbox" id="camp4-2"><label for="camp4-2"><span>Used JS to manipulate the DOM</span></label></li>
-            <li><input type="checkbox" id="camp4-3"><label for="camp4-3"><span>Connected the frontend to her own backend with fetch()</span></label></li>
+          <div class="deliverable"><b>Trail marker · Deliverable</b>A script that automates a real, recurring task — like organizing files or pulling data from an API on a schedule.</div>
+          <ul class="checklist">
+            <li><label><input type="checkbox" id="camp4-1"><span>Automated a file or folder task</span></label></li>
+            <li><label><input type="checkbox" id="camp4-2"><span>Pulled data from a live API</span></label></li>
+            <li><label><input type="checkbox" id="camp4-3"><span>Scraped a simple webpage responsibly</span></label></li>
           </ul>
+          <div class="camp-complete-tag">✓ Camp cleared</div>
         </div>
       </div>
 
-      <div class="node">
-        <div class="node-marker"></div>
+      <div class="node" data-camp="camp5">
+        <div class="node-marker"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M4 19h16"/></svg></div>
         <div class="card">
-          <div class="card-top"><span class="camp-label">Camp 5</span><span class="week-range">Weeks 42–50</span></div>
+          <span class="here-badge" style="display:none;"><span class="dot"></span>You are here</span>
+          <div class="card-top"><span class="camp-label">Camp 5</span></div>
           <h3>Data Handling & Intro ML</h3>
           <div class="terrain">
             <div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick"></div>
@@ -298,24 +416,26 @@
             <span class="topic">scikit-learn</span><span class="topic">Train/test split & metrics</span>
           </div>
           <div class="deliverable"><b>Trail marker · Deliverable</b>A trained model on a dataset she picks, with a short write-up of results.</div>
-          <ul class="checklist" data-camp="camp5">
-            <li><input type="checkbox" id="camp5-1"><label for="camp5-1"><span>Cleaned and explored a real dataset with pandas</span></label></li>
-            <li><input type="checkbox" id="camp5-2"><label for="camp5-2"><span>Visualized data with matplotlib</span></label></li>
-            <li><input type="checkbox" id="camp5-3"><label for="camp5-3"><span>Trained a regression or classification model</span></label></li>
-            <li><input type="checkbox" id="camp5-4"><label for="camp5-4"><span>Evaluated it and wrote up the results</span></label></li>
+          <ul class="checklist">
+            <li><label><input type="checkbox" id="camp5-1"><span>Cleaned and explored a real dataset with pandas</span></label></li>
+            <li><label><input type="checkbox" id="camp5-2"><span>Visualized data with matplotlib</span></label></li>
+            <li><label><input type="checkbox" id="camp5-3"><span>Trained a regression or classification model</span></label></li>
+            <li><label><input type="checkbox" id="camp5-4"><span>Evaluated it and wrote up the results</span></label></li>
           </ul>
+          <div class="camp-complete-tag">✓ Camp cleared</div>
         </div>
       </div>
 
       <div class="node rest">
         <div class="node-marker"></div>
-        <div class="rest-card"><b>Rest stop C</b> — Weeks 51–54 · review before the final ascent</div>
+        <div class="rest-card"><b>Rest stop C</b> — review before the final ascent</div>
       </div>
 
-      <div class="node">
-        <div class="node-marker"></div>
+      <div class="node" data-camp="camp6">
+        <div class="node-marker"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4 4 0 01-.5-7.97A5.5 5.5 0 0117 8.5a4.5 4.5 0 01-.5 9H7z"/></svg></div>
         <div class="card">
-          <div class="card-top"><span class="camp-label">Camp 6</span><span class="week-range">Weeks 55–61</span></div>
+          <span class="here-badge" style="display:none;"><span class="dot"></span>You are here</span>
+          <div class="card-top"><span class="camp-label">Camp 6</span></div>
           <h3>Cloud Fundamentals</h3>
           <div class="terrain">
             <div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick"></div><div class="tick"></div>
@@ -326,18 +446,20 @@
             <span class="topic">SageMaker Studio Lab</span><span class="topic">Config & environments</span>
           </div>
           <div class="deliverable"><b>Trail marker · Deliverable</b>Her Camp 3 API or Camp 5 model, live on AWS — not just running locally.</div>
-          <ul class="checklist" data-camp="camp6">
-            <li><input type="checkbox" id="camp6-1"><label for="camp6-1"><span>Understands VMs, storage, and basic AWS concepts</span></label></li>
-            <li><input type="checkbox" id="camp6-2"><label for="camp6-2"><span>Deployed an app or notebook to the cloud</span></label></li>
-            <li><input type="checkbox" id="camp6-3"><label for="camp6-3"><span>Ran an ML workflow on SageMaker Studio Lab</span></label></li>
+          <ul class="checklist">
+            <li><label><input type="checkbox" id="camp6-1"><span>Understands VMs, storage, and basic AWS concepts</span></label></li>
+            <li><label><input type="checkbox" id="camp6-2"><span>Deployed an app or notebook to the cloud</span></label></li>
+            <li><label><input type="checkbox" id="camp6-3"><span>Ran an ML workflow on SageMaker Studio Lab</span></label></li>
           </ul>
+          <div class="camp-complete-tag">✓ Camp cleared</div>
         </div>
       </div>
 
-      <div class="node summit">
-        <div class="node-marker"></div>
+      <div class="node summit" data-camp="camp7">
+        <div class="node-marker"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l6-14 3 6 2-3 5 11H4z"/></svg></div>
         <div class="card">
-          <div class="card-top"><span class="camp-label">Summit</span><span class="week-range">Weeks 62–72</span></div>
+          <span class="here-badge" style="display:none;"><span class="dot"></span>You are here</span>
+          <div class="card-top"><span class="camp-label">Summit</span></div>
           <h3>Capstone</h3>
           <div class="terrain">
             <div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick on"></div><div class="tick on"></div>
@@ -348,12 +470,13 @@
             <span class="topic">Documentation</span><span class="topic">Portfolio polish</span>
           </div>
           <div class="deliverable"><b>Trail marker · Deliverable</b>A full portfolio project: trained model, backend API serving it, frontend demo, live on the cloud, documented on GitHub.</div>
-          <ul class="checklist" data-camp="camp7">
-            <li><input type="checkbox" id="camp7-1"><label for="camp7-1"><span>Combined model + API + frontend into one working app</span></label></li>
-            <li><input type="checkbox" id="camp7-2"><label for="camp7-2"><span>Deployed the full project live</span></label></li>
-            <li><input type="checkbox" id="camp7-3"><label for="camp7-3"><span>Documented it properly — README, repo, write-up</span></label></li>
-            <li><input type="checkbox" id="camp7-4"><label for="camp7-4"><span>Has a live link + repo she can show colleges or employers</span></label></li>
+          <ul class="checklist">
+            <li><label><input type="checkbox" id="camp7-1"><span>Combined model + API + frontend into one working app</span></label></li>
+            <li><label><input type="checkbox" id="camp7-2"><span>Deployed the full project live</span></label></li>
+            <li><label><input type="checkbox" id="camp7-3"><span>Documented it properly — README, repo, write-up</span></label></li>
+            <li><label><input type="checkbox" id="camp7-4"><span>Has a live link + repo she can show colleges or employers</span></label></li>
           </ul>
+          <div class="camp-complete-tag">✓ Summit reached</div>
         </div>
       </div>
 
@@ -362,29 +485,28 @@
 
   <!-- POSTCARD VIEW -->
   <section id="postcard">
-    <div class="season">
-      <div class="when">Now → mid fall</div>
+    <div class="season"><span class="step-num">01</span>
+      <div class="when">First</div>
       <h4>Learning to build like a professional</h4>
-      <p>Ibukun starts with real programming fundamentals and picks up the habits professional developers use every day — organizing code, tracking changes, testing her work. She'll finish this stretch with her first real project saved to her own portfolio.</p>
+      <p>Ibukun starts with real programming fundamentals and picks up the habits professional developers use every day — organizing code, tracking changes, testing her work. She finishes this stretch with her first real project saved to her own portfolio.</p>
     </div>
-    <div class="season">
-      <div class="when">Winter → spring</div>
-      <h4>Building tools and websites</h4>
-      <p>She starts automating everyday tasks with code, then builds the two halves of a real website: the part users see (frontend) and the part that stores and serves data (backend). By spring, she'll have a small working website of her own.</p>
+    <div class="season"><span class="step-num">02</span>
+      <div class="when">Next</div>
+      <h4>Building websites and automating tasks</h4>
+      <p>She builds the part of a website users actually see — pages, layout, styling — then builds the part that stores and serves data behind the scenes, connecting the two into one working site. She also picks up automation: using code to handle repetitive tasks on its own.</p>
     </div>
-    <div class="season">
-      <div class="when">Summer</div>
+    <div class="season"><span class="step-num">03</span>
+      <div class="when">Then</div>
       <h4>Into AI and machine learning</h4>
-      <p>With more free time over the summer, she moves into the part her dad's been asking about: teaching computers to find patterns in data and make predictions. She'll train her first real machine learning model.</p>
+      <p>She moves into the part her dad's been asking about: teaching computers to find patterns in data and make predictions. She trains her first real machine learning model, end to end.</p>
     </div>
-    <div class="season">
-      <div class="when">Fall → winter, year two</div>
-      <h4>Cloud, and the final project</h4>
+    <div class="season"><span class="step-num">04</span>
+      <div class="when">Finally</div>
+      <h4>Cloud, and the capstone project</h4>
       <p>She learns to launch her projects on the same cloud platforms companies like Netflix and Amazon run on. The program ends with a capstone: one complete project — website, AI model, and cloud hosting — built entirely by her, live on the internet.</p>
     </div>
     <div class="postcard-note">
-      Pace: 4 hours a week · Estimated total time: ~17 months, including built-in breaks for exams and holidays.<br>
-      This mirrors the breadth of a first-year college CS sequence — it's a real program, not a weekend course.
+      Ibukun works through this at a steady, sustainable pace with built-in review periods, so nothing gets rushed and nothing gets skipped.
     </div>
   </section>
 
@@ -396,6 +518,16 @@
 </footer>
 
 <script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const pre = document.getElementById('preloader');
+      pre.classList.add('hide');
+      document.body.classList.remove('preloading');
+      document.body.classList.add('loaded');
+      setTimeout(() => pre.remove(), 800);
+    }, 1000);
+  });
+
   const btnTrail = document.getElementById('btn-trail');
   const btnPostcard = document.getElementById('btn-postcard');
   const trail = document.getElementById('trail');
@@ -408,11 +540,70 @@
   btnPostcard.addEventListener('click', () => {
     postcard.classList.add('active'); trail.classList.remove('active');
     btnPostcard.classList.add('active'); btnTrail.classList.remove('active');
+    document.querySelectorAll('#postcard .season').forEach(revealObserver.observe.bind(revealObserver));
   });
 
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('revealed'); } });
+  }, {threshold:0.15});
+  document.querySelectorAll('#trail .node').forEach(el => revealObserver.observe(el));
+
+  const campGroups = ['camp1','camp2','camp3','camp4','camp5','camp6','camp7'];
   const checkboxes = Array.from(document.querySelectorAll('.checklist input[type=checkbox]'));
 
-  function updateProgress(){
+  function confettiBurst(x, y){
+    const colors = ['#FFB648','#4FD8CE','#FFD166','#FF7A6E'];
+    for(let i=0;i<18;i++){
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      p.style.background = colors[i % colors.length];
+      p.style.boxShadow = '0 0 6px ' + colors[i % colors.length];
+      const dx = (Math.random()-0.5) * 260;
+      const dy = 120 + Math.random() * 160;
+      const rot = Math.random() * 720;
+      document.body.appendChild(p);
+      p.animate([
+        {transform:'translate(0,0) rotate(0deg)', opacity:1},
+        {transform:`translate(${dx}px, ${dy}px) rotate(${rot}deg)`, opacity:0}
+      ], {duration: 900 + Math.random()*500, easing:'cubic-bezier(.3,.6,.4,1)'});
+      setTimeout(() => p.remove(), 1500);
+    }
+  }
+
+  function updateCampTags(triggerConfetti){
+    campGroups.forEach(camp => {
+      const node = document.querySelector(`.node[data-camp="${camp}"]`);
+      if(!node) return;
+      const boxes = Array.from(node.querySelectorAll('.checklist input[type=checkbox]'));
+      const allDone = boxes.length && boxes.every(b => b.checked);
+      const tag = node.querySelector('.camp-complete-tag');
+      const wasShown = tag.classList.contains('show');
+      tag.classList.toggle('show', allDone);
+      if(allDone && !wasShown && triggerConfetti){
+        const rect = tag.getBoundingClientRect();
+        confettiBurst(rect.left + rect.width/2, rect.top + window.scrollY);
+      }
+    });
+  }
+
+  function updateCurrentBadge(){
+    document.querySelectorAll('.here-badge').forEach(b => b.style.display = 'none');
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('current'));
+    for(const camp of campGroups){
+      const node = document.querySelector(`.node[data-camp="${camp}"]`);
+      const boxes = Array.from(node.querySelectorAll('.checklist input[type=checkbox]'));
+      const allDone = boxes.length && boxes.every(b => b.checked);
+      if(!allDone){
+        node.classList.add('current');
+        node.querySelector('.here-badge').style.display = 'inline-flex';
+        break;
+      }
+    }
+  }
+
+  function updateProgress(triggerConfetti){
     const total = checkboxes.length;
     const done = checkboxes.filter(c => c.checked).length;
     const pct = total ? Math.round((done/total)*100) : 0;
@@ -423,6 +614,8 @@
       const span = c.parentElement.querySelector('span');
       if(span){ span.classList.toggle('done', c.checked); }
     });
+    updateCampTags(triggerConfetti);
+    updateCurrentBadge();
   }
 
   async function loadState(){
@@ -430,14 +623,14 @@
       try{
         const res = await window.storage.get('waypoint:' + cb.id, false);
         if(res && res.value === 'true'){ cb.checked = true; }
-      }catch(e){ /* key not set yet, leave unchecked */ }
+      }catch(e){ /* not set yet */ }
     }
-    updateProgress();
+    updateProgress(false);
   }
 
   checkboxes.forEach(cb => {
     cb.addEventListener('change', async () => {
-      updateProgress();
+      updateProgress(true);
       try{
         await window.storage.set('waypoint:' + cb.id, String(cb.checked), false);
       }catch(e){ console.error('Could not save progress', e); }
